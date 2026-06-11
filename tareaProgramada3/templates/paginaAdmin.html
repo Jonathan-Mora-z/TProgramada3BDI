@@ -200,7 +200,7 @@
                             Documento de identidad
                         </th>
                         <th>
-                            Saldo Vacaciones
+                            Puesto
                         </th>
                         <th>
                             Seleccionar
@@ -209,13 +209,13 @@
                     {% for empleado in empleados %}
                     <tr align="left">
                         <td>
-                            {{ empleado[2] }}
-                        </td>
-                        <td>
                             {{ empleado[1] }}
                         </td>
                         <td>
-                            {{ empleado[4] }}
+                            {{ empleado[2] }}
+                        </td>
+                        <td>
+                            {{ empleado[6] }}
                         </td>
                         <td>
                             <input 

@@ -27,13 +27,39 @@ def procesarLogin():
     resultado = cursor.fetchone()
     tipo=resultado[3]
     IdUsuario = resultado[1]
+    IdEmpleado = resultado[0]
     session["IdUsuario"] = IdUsuario
-    BD.commit()
-    BD.close()
+    session["IdEmpleado"]=IdEmpleado
     if tipo == "0":
-        return render_template("paginaAdmin.html")
+        cursor.execute("EXEC dbo.consultarEmpleados")
+        datos=cursor.fetchall()
+        BD.commit()
+        BD.close()
+        return render_template("paginaAdmin.html",empleados=datos)
     else:
-        return render_template("paginaEmpleado.html")
+        cursor.execute("EXEC dbo.obtenerEmpleado @Id=?", (IdUsuario,))
+        empleado=cursor.fetchone()
+        BD.commit()
+        BD.close()
+        return render_template("paginaEmpleado.html" , nombre=empleado[1])
+        #cursor.execute("EXEC dbo.consultarPlanillaSemanalEmpleado @id=?", (IdUsuario,))
+        #planilla=cursor.fetchall()
+        #BD.commit()
+        #BD.close()
+        #return render_template("planillaSeamanalEmpleado.html", nombre=empleado[1], planilla=planilla)
+@app.route("/planillas", methods=["GET","POST"])
+def planillaSemanal():
+    BD=conectarBD()
+    cursor=BD.cursor()
+    if request.form["accion"]=="semanal":
+        cursor.execute("EXEC dbo.obtenerDatosSemanalesEmpleado @Id=?", (session["IdEmpleado"],))
+        planilla=cursor.fetchall()
+        BD.commit()
+        BD.close()
+        return render_template("planillaSemanalEmpleado.html", planilla=planilla)
+    else:
+        return render_template("planillaMensualEmpleado.html")
+
 @app.route("/logout")
 def logout():
     IdUsuario = session.get("IdUsuario")
@@ -65,27 +91,13 @@ def filtrar():
     cursor=BD.cursor()
     if not filtro or filtro.strip() == "":
         return redirect("/principal")
-    if filtro.isalpha():
-        tipo=11
-        cursor.execute("EXEC dbo.obtenerTipoEvento @Id=?", (tipo,))
-        evento=cursor.fetchone()[0]
-    if filtro.isdigit():
-        tipo=12
-        cursor.execute("EXEC dbo.obtenerTipoEvento @Id=?", (tipo,))
-        evento=cursor.fetchone()[0]
-    cursor.execute(
-            "EXEC dbo.registrarEnBitacora @IdTipoEvento=?, @Descripcion=?, @idUsuario=?, @PostInIp=?",
-            (tipo, f"{evento}, Filtro: {filtro}", 
-            session.get("IdUsuario"), request.remote_addr)
-    )
-    
     cursor.execute("EXEC dbo.filtrarEmpleados @Filtro=?", (filtro,))
     empleados = cursor.fetchall()
     cursor.execute("EXEC dbo.consultarPuestos")
     puestos = cursor.fetchall()
     BD.commit()
     BD.close()
-    return render_template("browserTareaBD.html",empleados=empleados,puestos=puestos,mensaje=evento)
+    return render_template("browserTareaBD.html",empleados=empleados,puestos=puestos)
 # Página del formulario
 @app.route("/insertar")
 def insertar():

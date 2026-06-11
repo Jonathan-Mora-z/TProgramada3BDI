@@ -1,1 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenido {{ nombre }}</title>
 
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .contenedor{
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 450px;
+        }
+
+        h1{
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .nombre{
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        .boton{
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .semanal{
+            background-color: #3498db;
+        }
+
+        .semanal:hover{
+            background-color: #217dbb;
+        }
+
+        .mensual{
+            background-color: #2ecc71;
+        }
+
+        .mensual:hover{
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <h1>Bienvenido {{ nombre }}</h1>
+
+        <form action="/planillas" method="POST">
+            <button class="boton semanal" type="submit" name="accion" value="semanal">
+                Consultar Planilla Semanal
+            </button>
+
+            <button class="boton mensual" type="submit" name="accion" value="mensual">
+                Consultar Planilla Mensual
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

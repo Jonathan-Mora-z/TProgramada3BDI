@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Planillas Semanales</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 40px;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 2px;
+                background-color: #ccc;
+            }
+
+            .cell {
+                background-color: white;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .header {
+                font-weight: bold;
+                background-color: #f2f2f2;
+            }
+
+            .clickable {
+                color: #0066cc;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .clickable:hover {
+                text-decoration: underline;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+            }
+
+            .modal-content {
+                background: white;
+                width: 70%;
+                max-width: 800px;
+                margin: 5% auto;
+                border-radius: 8px;
+                padding: 20px;
+            }
+
+            .modal-body {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+            .btn-cerrar {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 15px;
+            }
+
+            .btn-cerrar:hover {
+                background-color: darkred;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h1>Planillas Semanales</h1>
+
+        <div class="grid">
+
+            <!-- Encabezados -->
+            <div class="cell header">Salario Bruto</div>
+            <div class="cell header">Total de Deducciones</div>
+            <div class="cell header">Salario Neto</div>
+            <div class="cell header">Cantidad de Horas Ordinarias</div>
+            <div class="cell header">Cantidad de Horas Extra Normales</div>
+            <div class="cell header">Cantidad de Horas Extra Doble</div>
+            {% for semana in planilla %}
+            <!-- Datos -->
+            <div class="cell">
+                <a href="#" class="clickable" id="btnAbrirSalario">{{semana[0]}}</a>
+            </div>
+
+            <div class="cell">
+                <a href="#" class="clickable" id="btnAbrirDeducciones">{{semana[1]}}</a>
+            </div>
+
+            <div class="cell">{{semana[2]}}</div>
+            <div class="cell">{{semana[3]}}</div>
+            <div class="cell">{{semana[4]}}</div>
+            <div class="cell">{{semana[5]}}</div>
+            {% endfor %}
+        </div>
+        <div id="modalSalario" class="modal">
+            <div class="modal-content">
+
+                <h2>Detalle Salario Bruto</h2>
+
+                <div class="modal-body">
+                    <!-- Aquí van muchos registros -->
+                </div>
+
+                <button id="btnCerrar" class="btn-cerrar">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+        <div id="modalDeducciones" class="modal">
+            <div class="modal-content">
+
+                <h2>Detalle Total de Deducciones</h2>
+
+                <div class="modal-body">
+                    <!-- Aquí van muchos registros -->
+                </div>
+
+                <button id="btnCerrarD" class="btn-cerrar">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+        <script>
+            const modalSalario = document.getElementById("modalSalario");
+            const modalDeducciones = document.getElementById("modalDeducciones");
+            const btnAbrirSalario = document.getElementById("btnAbrirSalario");
+            const btnAbrirDeducciones = document.getElementById("btnAbrirDeducciones");
+            const btnCerrar = document.getElementById("btnCerrar");
+            const btnCerrarD = document.getElementById("btnCerrarD");   
+            btnAbrirSalario.addEventListener("click", () => {
+                modalSalario.style.display = "block";
+                
+            });
+
+            btnAbrirDeducciones.addEventListener("click", () => {
+                modalDeducciones.style.display = "block";
+            });
+
+            btnCerrar.addEventListener("click", () => {
+                modalSalario.style.display = "none";
+            });
+
+            btnCerrarD.addEventListener("click", () => {
+                modalDeducciones.style.display = "none";
+            });
+        </script>
+    </body>
+</html>
