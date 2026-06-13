@@ -80,6 +80,23 @@
             .btn-cerrar:hover {
                 background-color: darkred;
             }
+            .detalle-grid{
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                gap: 1px;
+                background-color: #ccc;
+            }
+
+            .detalle-grid .cell{
+                background-color: white;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .detalle-grid .header{
+                font-weight: bold;
+                background-color: #f2f2f2;
+            }
         </style>
     </head>
     <body>
@@ -117,7 +134,28 @@
                 <h2>Detalle Salario Bruto</h2>
 
                 <div class="modal-body">
-                    <!-- Aquí van muchos registros -->
+                    <div class="detalle-grid">
+
+                        <!-- Encabezados -->
+                        <div class="cell header">Hora de entrada</div>
+                        <div class="cell header">Hora de salida</div>
+                        <div class="cell header">Horas Ordinarias</div>
+                        <div class="cell header">Monto devengado</div>
+                        <div class="cell header">Horas Extra</div>
+                        <div class="cell header">Monto devengado</div>
+                        <div class="cell header">Horas extra dobles</div>
+                        <div class="cell header">Monto devengado</div>
+                        {% for detalle in salarioBruto %}
+                        <div class="cell">{{detalle[0]}}</div>
+                        <div class="cell">{{detalle[1]}}</div>
+                        <div class="cell">{{detalle[2]}}</div>
+                        <div class="cell">{{detalle[3]}}</div>
+                        <div class="cell">{{detalle[4]}}</div>
+                        <div class="cell">{{detalle[5]}}</div>
+                        <div class="cell">{{detalle[6]}}</div>
+                        <div class="cell">{{detalle[7]}}</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <button id="btnCerrar" class="btn-cerrar">

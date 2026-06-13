@@ -27,9 +27,7 @@ def procesarLogin():
     resultado = cursor.fetchone()
     tipo=resultado[3]
     IdUsuario = resultado[1]
-    IdEmpleado = resultado[0]
     session["IdUsuario"] = IdUsuario
-    session["IdEmpleado"]=IdEmpleado
     if tipo == "0":
         cursor.execute("EXEC dbo.consultarEmpleados")
         datos=cursor.fetchall()
@@ -39,6 +37,7 @@ def procesarLogin():
     else:
         cursor.execute("EXEC dbo.obtenerEmpleado @Id=?", (IdUsuario,))
         empleado=cursor.fetchone()
+        session["IdEmpleado"] = empleado[0]
         BD.commit()
         BD.close()
         return render_template("paginaEmpleado.html" , nombre=empleado[1])
@@ -54,9 +53,11 @@ def planillaSemanal():
     if request.form["accion"]=="semanal":
         cursor.execute("EXEC dbo.obtenerDatosSemanalesEmpleado @Id=?", (session["IdEmpleado"],))
         planilla=cursor.fetchall()
+        cursor.nextset()
+        detallesSalarioBruto=cursor.fetchall()
         BD.commit()
         BD.close()
-        return render_template("planillaSemanalEmpleado.html", planilla=planilla)
+        return render_template("planillaSemanalEmpleado.html", planilla=planilla,salarioBruto=detallesSalarioBruto)
     else:
         return render_template("planillaMensualEmpleado.html")
 
@@ -79,11 +80,8 @@ def inicio():
     cursor=BD.cursor()
     cursor.execute("EXEC dbo.consultarEmpleados")
     empleados = cursor.fetchall()
-    cursor.execute("EXEC dbo.consultarPuestos")
-    puestos = cursor.fetchall()
     BD.close()
-    mensaje=session.pop("mensaje","")
-    return render_template("browserTareaBD.html",empleados=empleados,puestos=puestos,mensaje=mensaje)
+    return render_template("paginaAdmin.html",empleados=empleados)
 @app.route("/filtrar", methods=["GET","POST"])
 def filtrar():
     filtro = request.form["filtro"]
@@ -93,11 +91,9 @@ def filtrar():
         return redirect("/principal")
     cursor.execute("EXEC dbo.filtrarEmpleados @Filtro=?", (filtro,))
     empleados = cursor.fetchall()
-    cursor.execute("EXEC dbo.consultarPuestos")
-    puestos = cursor.fetchall()
     BD.commit()
     BD.close()
-    return render_template("browserTareaBD.html",empleados=empleados,puestos=puestos)
+    return render_template("paginaAdmin.html",empleados=empleados)
 # Página del formulario
 @app.route("/insertar")
 def insertar():
