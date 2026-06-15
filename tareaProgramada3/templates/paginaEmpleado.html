@@ -62,6 +62,14 @@
         .mensual:hover{
             background-color: #27ae60;
         }
+
+        .regresar{
+            background-color: #e74c3c;
+        }
+
+        .regresar:hover{
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +85,11 @@
             <button class="boton mensual" type="submit" name="accion" value="mensual">
                 Consultar Planilla Mensual
             </button>
+            {% if tipoUsuario == "0" %}
+            <button class="boton regresar" type="button" onclick="window.location.href='/principal';">
+                Regresar a la interfaz de administrador
+            </button>
+            {% endif %}
         </form>
     </div>
 

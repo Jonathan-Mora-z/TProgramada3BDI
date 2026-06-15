@@ -28,6 +28,7 @@ def procesarLogin():
     tipo=resultado[3]
     IdUsuario = resultado[1]
     session["IdUsuario"] = IdUsuario
+    session["tipoUsuario"] = tipo
     if tipo == "0":
         cursor.execute("EXEC dbo.consultarEmpleados")
         datos=cursor.fetchall()
@@ -39,8 +40,8 @@ def procesarLogin():
         empleado=cursor.fetchone()
         session["IdEmpleado"] = empleado[0]
         BD.commit()
-        BD.close()
-        return render_template("paginaEmpleado.html" , nombre=empleado[1])
+        BD.close() 
+        return render_template("paginaEmpleado.html" , nombre=empleado[1]) 
         #cursor.execute("EXEC dbo.consultarPlanillaSemanalEmpleado @id=?", (IdUsuario,))
         #planilla=cursor.fetchall()
         #BD.commit()
@@ -60,8 +61,17 @@ def planillaSemanal():
         return render_template("planillaSemanalEmpleado.html", planilla=planilla,salarioBruto=detallesSalarioBruto)
     else:
         return render_template("planillaMensualEmpleado.html")
-
-@app.route("/logout")
+@app.route("/impersonar", methods=["GET","POST"])
+def impersonar():
+    id = request.form.get("empleado") or request.args.get("empleado")
+    BD=conectarBD()
+    cursor=BD.cursor()
+    cursor.execute("EXEC dbo.obtenerEmpleadoPorId @Id=?", (id,))
+    empleado=cursor.fetchone()
+    BD.commit()
+    BD.close() 
+    return render_template("paginaEmpleado.html" , nombre=empleado[2], tipoUsuario=session["tipoUsuario"]) 
+@app.route("/logout")   
 def logout():
     IdUsuario = session.get("IdUsuario")
     if IdUsuario:
