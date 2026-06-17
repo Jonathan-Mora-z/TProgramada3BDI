@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Planillas Semanales</title>
+        <title>Planillas Mensuales</title>
 
         <style>
             body {
@@ -16,11 +16,11 @@
                 margin-bottom: 30px;
             }
 
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(6, 1fr);
-                gap: 2px;
-                background-color: #ccc;
+            .grid{
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:2px;
+                background:#ccc;
             }
 
             .cell {
@@ -97,71 +97,45 @@
                 font-weight: bold;
                 background-color: #f2f2f2;
             }
+            .detalle-grid-deducciones{
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1px;
+                background-color: #ccc;
+            }
+
+            .detalle-grid-deducciones .cell{
+                background-color: white;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .detalle-grid-deducciones .header{
+                font-weight: bold;
+                background-color: #f2f2f2;
+            }
         </style>
     </head>
     <body>
 
-        <h1>Planillas Semanales</h1>
+        <h1>Planillas Mensuales</h1>
 
         <div class="grid">
 
             <!-- Encabezados -->
+            <div class="cell header">Mes</div>
             <div class="cell header">Salario Bruto</div>
-            <div class="cell header">Total de Deducciones</div>
+            <div class="cell header">Total Deducciones</div>
             <div class="cell header">Salario Neto</div>
-            <div class="cell header">Cantidad de Horas Ordinarias</div>
-            <div class="cell header">Cantidad de Horas Extra Normales</div>
-            <div class="cell header">Cantidad de Horas Extra Doble</div>
-            {% for semana in planilla %}
+            {% for mes in datos %}
             <!-- Datos -->
+            <div class="cell">{{mes[1]}}-{{mes[2]}}</div>
+            <div class="cell">{{mes[3]}}</div>
             <div class="cell">
-                <a href="#" class="clickable" id="btnAbrirSalario">{{semana[0]}}</a>
+                <a href="#" class="clickable" id="btnAbrirDeducciones">{{mes[4]}}</a>
             </div>
-
-            <div class="cell">
-                <a href="#" class="clickable" id="btnAbrirDeducciones">{{semana[1]}}</a>
-            </div>
-
-            <div class="cell">{{semana[2]}}</div>
-            <div class="cell">{{semana[3]}}</div>
-            <div class="cell">{{semana[4]}}</div>
-            <div class="cell">{{semana[5]}}</div>
+            <div class="cell">{{mes[5]}}</div>
             {% endfor %}
-        </div>
-        <div id="modalSalario" class="modal">
-            <div class="modal-content">
-
-                <h2>Detalle Salario Bruto</h2>
-
-                <div class="modal-body">
-                    <div class="detalle-grid">
-
-                        <!-- Encabezados -->
-                        <div class="cell header">Hora de entrada</div>
-                        <div class="cell header">Hora de salida</div>
-                        <div class="cell header">Horas Ordinarias</div>
-                        <div class="cell header">Monto devengado</div>
-                        <div class="cell header">Horas Extra</div>
-                        <div class="cell header">Monto devengado</div>
-                        <div class="cell header">Horas extra dobles</div>
-                        <div class="cell header">Monto devengado</div>
-                        {% for detalle in salarioBruto %}
-                        <div class="cell">{{detalle[1]}}</div>
-                        <div class="cell">{{detalle[2]}}</div>
-                        <div class="cell">{{detalle[3]}}</div>
-                        <div class="cell">{{detalle[4]}}</div>
-                        <div class="cell">{{detalle[5]}}</div>
-                        <div class="cell">{{detalle[6]}}</div>
-                        <div class="cell">{{detalle[7]}}</div>
-                        <div class="cell">{{detalle[8]}}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <button id="btnCerrar" class="btn-cerrar">
-                    Cerrar
-                </button>
-            </div>
         </div>
         <div id="modalDeducciones" class="modal">
             <div class="modal-content">
@@ -169,32 +143,30 @@
                 <h2>Detalle Total de Deducciones</h2>
 
                 <div class="modal-body">
-                    <!-- Aquí van muchos registros -->
+                    <div class="detalle-grid-deducciones">
+                        <div class="cell header">Nombre</div>
+                        <div class="cell header">Porcentual</div>
+                        <div class="cell header">Monto</div>
+                    </div>
                 </div>
-
+                {% for deduccion in deducciones %}
+                <div class="detalle-grid-deducciones">
+                    <div class="cell">{{deduccion[1]}}</div>
+                    <div class="cell">{%if deduccion[3]==True%}Sí{%else%}No{%endif%}</div>  
+                    <div class="cell">{{deduccion[2]}}</div>
+                </div>
+                {% endfor %}
                 <button id="btnCerrarD" class="btn-cerrar">
                     Cerrar
                 </button>
             </div>
         </div>
         <script>
-            const modalSalario = document.getElementById("modalSalario");
             const modalDeducciones = document.getElementById("modalDeducciones");
-            const btnAbrirSalario = document.getElementById("btnAbrirSalario");
             const btnAbrirDeducciones = document.getElementById("btnAbrirDeducciones");
-            const btnCerrar = document.getElementById("btnCerrar");
             const btnCerrarD = document.getElementById("btnCerrarD");   
-            btnAbrirSalario.addEventListener("click", () => {
-                modalSalario.style.display = "block";
-                
-            });
-
             btnAbrirDeducciones.addEventListener("click", () => {
                 modalDeducciones.style.display = "block";
-            });
-
-            btnCerrar.addEventListener("click", () => {
-                modalSalario.style.display = "none";
             });
 
             btnCerrarD.addEventListener("click", () => {
