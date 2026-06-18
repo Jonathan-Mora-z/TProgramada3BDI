@@ -1,20 +1,16 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarTipoDeduccion]    Script Date: 17/06/2026 11:38:55 p. m. ******/
+/****** Object:  StoredProcedure [dbo].[InsertarTipoEvento]    Script Date: 17/06/2026 11:39:17 p. m. ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertarTipoDeduccion]
+CREATE PROCEDURE [dbo].[InsertarTipoEvento]
     @Id INT,
-    @Nombre VARCHAR(100),
-    @Obligatorio BIT,
-    @Porcentual BIT,
-    @Valor REAL,
-    @NombreTipoMovimiento VARCHAR(100)
+    @Nombre VARCHAR(100)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -22,9 +18,6 @@ BEGIN
     BEGIN TRY
 
         BEGIN TRANSACTION
-
-        DECLARE @IdTipoMovimiento INT
-
         IF (@Nombre IS NULL OR @Nombre = '')
         BEGIN
             ROLLBACK;
@@ -35,7 +28,7 @@ BEGIN
         IF EXISTS
         (
             SELECT 1
-            FROM TipoDeDeduccion
+            FROM TiposDeEvento
             WHERE Id = @Id
         )
         BEGIN
@@ -47,7 +40,7 @@ BEGIN
         IF EXISTS
         (
             SELECT 1
-            FROM TipoDeDeduccion
+            FROM TiposDeEvento
             WHERE Nombre = @Nombre
         )
         BEGIN
@@ -56,34 +49,14 @@ BEGIN
             RETURN;
         END
 
-        -- Buscar TipoMovimiento
-        SELECT @IdTipoMovimiento = Id
-        FROM TipoDeMovimiento
-        WHERE Nombre = @NombreTipoMovimiento
-
-        IF (@IdTipoMovimiento IS NULL)
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
-
-        INSERT INTO TipoDeDeduccion
+        INSERT INTO TiposDeEvento
         (
             Id,
-            Obligatorio,
-            Porcentual,
-            Valor,
-            IdTipoMov,
             Nombre
         )
         VALUES
         (
             @Id,
-            @Obligatorio,
-            @Porcentual,
-            @Valor,
-            @IdTipoMovimiento,
             @Nombre
         );
 

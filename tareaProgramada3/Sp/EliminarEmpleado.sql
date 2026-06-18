@@ -1,73 +1,58 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarTipoMovimiento]    Script Date: 17/06/2026 11:39:50 p. m. ******/
+/****** Object:  StoredProcedure [dbo].[EliminarEmpleado]    Script Date: 17/06/2026 11:37:31 p. m. ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertarTipoMovimiento]
-    @Id INT
-    ,@Nombre VARCHAR(100)
-    ,@Accion CHAR(1)
+CREATE PROCEDURE [dbo].[EliminarEmpleado]
+    @ValorDocumentoIdentidad INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
     BEGIN TRY
-        BEGIN TRANSACTION
-        IF (@Nombre IS NULL OR LTRIM(RTRIM(@Nombre)) = '')
+
+        DECLARE @IdEmpleado INT;
+
+        BEGIN TRANSACTION;
+
+        SELECT @IdEmpleado = Id
+        FROM dbo.Empleado
+        WHERE ValorDocumentoIdentidad = @ValorDocumentoIdentidad;
+
+        IF @IdEmpleado IS NULL
         BEGIN
             ROLLBACK;
             SELECT 50008 AS Resultado;
             RETURN;
-        END
+        END;
 
-        IF (@Accion NOT IN ('C', 'D'))
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
-
-        IF EXISTS
+        IF NOT EXISTS
         (
             SELECT 1
-            FROM TipoDeMovimiento
-            WHERE Id = @Id
+            FROM dbo.Empleado
+            WHERE Id = @IdEmpleado
+              AND EsActivo = 1
         )
         BEGIN
             ROLLBACK;
             SELECT 50008 AS Resultado;
             RETURN;
-        END
+        END;
 
-        IF EXISTS
-        (
-            SELECT 1
-            FROM TipoDeMovimiento
-            WHERE Nombre = @Nombre
-        )
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
+        UPDATE dbo.Empleado
+        SET EsActivo = 0
+        WHERE Id = @IdEmpleado;
 
-        INSERT INTO TipoDeMovimiento
-        (
-            Id,
-            Nombre,
-            Acción
-        )
-        VALUES
-        (
-            @Id,
-            @Nombre,
-            @Accion
-        );
+        UPDATE dbo.EmpleadoDeduccion
+        SET Activa = 0,
+            FechaFin = GETDATE()
+        WHERE idEmpleado = @IdEmpleado
+          AND Activa = 1;
 
         COMMIT;
 
@@ -106,6 +91,7 @@ BEGIN
 
     END CATCH
 END
+
 GO
 
 

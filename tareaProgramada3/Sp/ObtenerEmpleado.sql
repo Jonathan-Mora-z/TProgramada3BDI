@@ -1,7 +1,7 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[obtenerEmpleado]    Script Date: 15/06/2026 11:01:42 a. m. ******/
+/****** Object:  StoredProcedure [dbo].[obtenerEmpleado]    Script Date: 17/06/2026 11:41:07 p. m. ******/
 SET ANSI_NULLS ON
 GO
 

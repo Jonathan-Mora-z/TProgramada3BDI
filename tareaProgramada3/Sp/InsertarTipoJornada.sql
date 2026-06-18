@@ -1,7 +1,7 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarTipoJornada]    Script Date: 15/06/2026 11:00:42 a. m. ******/
+/****** Object:  StoredProcedure [dbo].[InsertarTipoJornada]    Script Date: 17/06/2026 11:39:36 p. m. ******/
 SET ANSI_NULLS ON
 GO
 

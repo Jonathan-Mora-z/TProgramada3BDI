@@ -1,7 +1,7 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarFeriado]    Script Date: 15/06/2026 10:59:33 a. m. ******/
+/****** Object:  StoredProcedure [dbo].[InsertarFeriado]    Script Date: 17/06/2026 11:38:23 p. m. ******/
 SET ANSI_NULLS ON
 GO
 

@@ -1,31 +1,46 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarTipoDeduccion]    Script Date: 17/06/2026 11:38:55 p. m. ******/
+/****** Object:  StoredProcedure [dbo].[AsignarJornada]    Script Date: 17/06/2026 10:45:45 p. m. ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertarTipoDeduccion]
-    @Id INT,
-    @Nombre VARCHAR(100),
-    @Obligatorio BIT,
-    @Porcentual BIT,
-    @Valor REAL,
-    @NombreTipoMovimiento VARCHAR(100)
+CREATE PROCEDURE [dbo].[AsignarJornada]
+    @ValorDocumentoIdentidad INT,
+    @Jornada VARCHAR(100),
+    @InicioSemana DATE
 AS
 BEGIN
+
     SET NOCOUNT ON;
 
     BEGIN TRY
 
-        BEGIN TRANSACTION
+        DECLARE @IdEmpleado INT;
+        DECLARE @IdTipoJornada INT;
+        DECLARE @IdJornadaEmpleado INT;
 
-        DECLARE @IdTipoMovimiento INT
+        BEGIN TRANSACTION;
 
-        IF (@Nombre IS NULL OR @Nombre = '')
+        SELECT @IdEmpleado = Id
+        FROM Empleado
+        WHERE ValorDocumentoIdentidad = @ValorDocumentoIdentidad;
+
+        IF @IdEmpleado IS NULL
+        BEGIN
+            ROLLBACK;
+            SELECT 50008 AS Resultado;
+            RETURN;
+        END
+
+        SELECT @IdTipoJornada = Id
+        FROM TipoDeJornada
+        WHERE Nombre = @Jornada;
+
+        IF @IdTipoJornada IS NULL
         BEGIN
             ROLLBACK;
             SELECT 50008 AS Resultado;
@@ -35,8 +50,9 @@ BEGIN
         IF EXISTS
         (
             SELECT 1
-            FROM TipoDeDeduccion
-            WHERE Id = @Id
+            FROM JornadaEmpleado
+            WHERE IdEmpleado = @IdEmpleado
+              AND FechaInicioSemana = @InicioSemana
         )
         BEGIN
             ROLLBACK;
@@ -44,47 +60,25 @@ BEGIN
             RETURN;
         END
 
-        IF EXISTS
-        (
-            SELECT 1
-            FROM TipoDeDeduccion
-            WHERE Nombre = @Nombre
-        )
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
+        SELECT @IdJornadaEmpleado =
+            ISNULL(MAX(Id),0) + 1
+        FROM JornadaEmpleado;
 
-        -- Buscar TipoMovimiento
-        SELECT @IdTipoMovimiento = Id
-        FROM TipoDeMovimiento
-        WHERE Nombre = @NombreTipoMovimiento
-
-        IF (@IdTipoMovimiento IS NULL)
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
-
-        INSERT INTO TipoDeDeduccion
+        INSERT INTO JornadaEmpleado
         (
             Id,
-            Obligatorio,
-            Porcentual,
-            Valor,
-            IdTipoMov,
-            Nombre
+            IdEmpleado,
+            IdTipoJornada,
+            FechaInicioSemana,
+            FechaSinSemana
         )
         VALUES
         (
-            @Id,
-            @Obligatorio,
-            @Porcentual,
-            @Valor,
-            @IdTipoMovimiento,
-            @Nombre
+            @IdJornadaEmpleado,
+            @IdEmpleado,
+            @IdTipoJornada,
+            @InicioSemana,
+            DATEADD(DAY, 6, @InicioSemana)
         );
 
         COMMIT;
@@ -123,7 +117,9 @@ BEGIN
         SELECT 50008 AS Resultado;
 
     END CATCH
+
 END
+
 GO
 
 

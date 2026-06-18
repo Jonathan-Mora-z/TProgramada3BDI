@@ -1,7 +1,7 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[consultarEmpleados]    Script Date: 15/06/2026 10:58:15 a. m. ******/
+/****** Object:  StoredProcedure [dbo].[consultarEmpleados]    Script Date: 17/06/2026 10:48:19 p. m. ******/
 SET ANSI_NULLS ON
 GO
 
@@ -17,6 +17,7 @@ BEGIN
 
         SELECT 
             e.Id,
+            e.IdUsuario,
             e.Nombre,
             e.ValorDocumentoIdentidad,
             e.FechaContratación,

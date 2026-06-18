@@ -1,7 +1,7 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[loginCompleto]    Script Date: 15/06/2026 11:01:16 a. m. ******/
+/****** Object:  StoredProcedure [dbo].[loginCompleto]    Script Date: 17/06/2026 11:40:15 p. m. ******/
 SET ANSI_NULLS ON
 GO
 

@@ -1,20 +1,18 @@
 USE [tareaProgramada3]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertarTipoDeduccion]    Script Date: 17/06/2026 11:38:55 p. m. ******/
+/****** Object:  StoredProcedure [dbo].[InsertarUsuario]    Script Date: 17/06/2026 11:40:04 p. m. ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertarTipoDeduccion]
+CREATE PROCEDURE [dbo].[InsertarUsuario]
     @Id INT,
-    @Nombre VARCHAR(100),
-    @Obligatorio BIT,
-    @Porcentual BIT,
-    @Valor REAL,
-    @NombreTipoMovimiento VARCHAR(100)
+    @Username VARCHAR(100),
+    @Pwd VARCHAR(100),
+    @TipoUsuario INT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -23,9 +21,21 @@ BEGIN
 
         BEGIN TRANSACTION
 
-        DECLARE @IdTipoMovimiento INT
+        IF (@Username IS NULL OR @Username = '')
+        BEGIN
+            ROLLBACK;
+            SELECT 50008 AS Resultado;
+            RETURN;
+        END
 
-        IF (@Nombre IS NULL OR @Nombre = '')
+        IF (@Pwd IS NULL OR @Pwd = '')
+        BEGIN
+            ROLLBACK;
+            SELECT 50008 AS Resultado;
+            RETURN;
+        END
+
+        IF (@TipoUsuario NOT IN (1,2))
         BEGIN
             ROLLBACK;
             SELECT 50008 AS Resultado;
@@ -35,7 +45,7 @@ BEGIN
         IF EXISTS
         (
             SELECT 1
-            FROM TipoDeDeduccion
+            FROM Usuario
             WHERE Id = @Id
         )
         BEGIN
@@ -47,8 +57,8 @@ BEGIN
         IF EXISTS
         (
             SELECT 1
-            FROM TipoDeDeduccion
-            WHERE Nombre = @Nombre
+            FROM Usuario
+            WHERE Username = @Username
         )
         BEGIN
             ROLLBACK;
@@ -56,35 +66,19 @@ BEGIN
             RETURN;
         END
 
-        -- Buscar TipoMovimiento
-        SELECT @IdTipoMovimiento = Id
-        FROM TipoDeMovimiento
-        WHERE Nombre = @NombreTipoMovimiento
-
-        IF (@IdTipoMovimiento IS NULL)
-        BEGIN
-            ROLLBACK;
-            SELECT 50008 AS Resultado;
-            RETURN;
-        END
-
-        INSERT INTO TipoDeDeduccion
+        INSERT INTO Usuario
         (
             Id,
-            Obligatorio,
-            Porcentual,
-            Valor,
-            IdTipoMov,
-            Nombre
+            Username,
+            Pwd,
+            TipoUsuario
         )
         VALUES
         (
             @Id,
-            @Obligatorio,
-            @Porcentual,
-            @Valor,
-            @IdTipoMovimiento,
-            @Nombre
+            @Username,
+            @Pwd,
+            @TipoUsuario
         );
 
         COMMIT;
